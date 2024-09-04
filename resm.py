@@ -2,7 +2,8 @@ import streamlit as st
 import docx
 import PyPDF2
 from duckduckgo_search import DDGS
-from docx2pdf import convert
+from docx
+import pypandoc
 import re
 
 # Function to extract text from PDF
@@ -378,14 +379,13 @@ def generate_resume(
         for activity in extracurricular_activities:
             doc.add_paragraph(activity)
     
-    temp_docx = "resume.docx"
-    doc.save(temp_docx)
+    # Save the DOCX file
+    doc.save(output_file)
     
     # Convert the DOCX file to PDF
-    temp_pdf = "resume.pdf"
-    convert(temp_docx, temp_pdf)
+    output = pypandoc.convert_file(output_file, 'pdf', outputfile=output_pdf_file)
     
-    return temp_pdf
+    return output_pdf_file
     
     
 # Function to estimate text area height based on content length
