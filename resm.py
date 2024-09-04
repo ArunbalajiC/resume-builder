@@ -496,9 +496,9 @@ def generate_resume(
         for activity in extracurricular_activities:
             y_position = add_section_content(activity, y_position)
 
-    # Finish the PDF
     c.save()
-    
+
+    # Save the PDF
     with open(output_pdf_file, 'wb') as f:
         f.write(buffer.getvalue())
 
