@@ -4,12 +4,9 @@ import PyPDF2
 from duckduckgo_search import DDGS
 import re
 import docx
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-
 
 
 def docx_to_html(docx_file):
@@ -279,7 +276,6 @@ def generate_resume(
     output_file='resume.docx',
     output_pdf_file='resume.pdf'
 ):
-    # Create DOCX file
     doc = docx.Document()
 
     # Add content to the DOCX file
@@ -397,7 +393,7 @@ def generate_resume(
 
     def add_section_content(content, y):
         c.setFont("Helvetica", 12)
-        y = add_text(c, content, y, y, usable_width)
+        y = add_text(c, content, margin, y, usable_width)
         y -= 20
         return y
 
@@ -496,9 +492,9 @@ def generate_resume(
         for activity in extracurricular_activities:
             y_position = add_section_content(activity, y_position)
 
+    # Finish the PDF
     c.save()
-
-    # Save the PDF
+    
     with open(output_pdf_file, 'wb') as f:
         f.write(buffer.getvalue())
 
