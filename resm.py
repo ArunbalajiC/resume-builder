@@ -2,7 +2,7 @@ import streamlit as st
 import docx
 import PyPDF2
 from duckduckgo_search import DDGS
-from docx
+import docx
 import pypandoc
 import re
 
