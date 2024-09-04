@@ -4,7 +4,6 @@ import PyPDF2
 from duckduckgo_search import DDGS
 from docx2pdf import convert
 import re
-import comtypes
 
 # Function to extract text from PDF
 def extract_text_from_pdf(pdf_file):
@@ -263,136 +262,130 @@ def generate_resume(
     output_file='resume.docx',
     output_pdf_file='resume.pdf'
 ):
-    # pythoncom.CoInitialize()
-    comtypes.CoInitialize()
-    try:
-        # Create a new Word document
-        doc = docx.Document()
+    doc = docx.Document()
+
+    # Set margins for the document
+    for section in doc.sections:
+        set_margins(section, left=0.5, right=0.5, top=0.5, bottom=0.5)
+
+    # Add a heading to the document
+    if name:
+        doc.add_heading(name, 0)
+
+    # Add contact information
+    if contact_info:
+        doc.add_paragraph(contact_info)
+
+    # Add professional summary
+    if professional_summary:
+        doc.add_heading('Professional Summary', level=1)
+        doc.add_paragraph(professional_summary)
+
+    # Add education section
+    if education:
+        doc.add_heading('Education', level=1)
+        for edu in education:
+            doc.add_paragraph(f"{edu['institution']} - {edu['degree']} ({edu['cgpa']}) - {edu['dates']}")
+
+    # Add experience section
+    if experience:
+        doc.add_heading('Experience', level=1)
+        for exp in experience:
+            doc.add_paragraph(f"{exp['title']} at {exp['company']} ({exp['dates']})")
+            doc.add_paragraph(exp['description'], style='List Bullet')
+
+    # Add projects section
+    if projects:
+        doc.add_heading('Projects', level=1)
+        for proj in projects:
+            doc.add_paragraph(proj['title'])
+            doc.add_paragraph(proj['description'], style='List Bullet')
+
+    # Add skills section
+    if skills:
+        doc.add_heading('Skills', level=1)
+        for skill in skills:
+            doc.add_paragraph(f"{skill['category']}: {', '.join(skill['skills'])}")
+
+    # Add languages section
+    if languages:
+        doc.add_heading('Languages', level=1)
+        doc.add_paragraph(', '.join(languages))
+
+    # Add links section
+    if links:
+        doc.add_heading('Links', level=1)
+        for link in links:
+            doc.add_paragraph(link)
+
+    # Add awards section
+    if awards:
+        doc.add_heading('Awards', level=1)
+        for award in awards:
+            doc.add_paragraph(award)
+
+    # Add certifications section
+    if certifications:
+        doc.add_heading('Certifications', level=1)
+        for certification in certifications:
+            doc.add_paragraph(certification)
+
+    # Add publications section
+    if publications:
+        doc.add_heading('Publications', level=1)
+        for publication in publications:
+            doc.add_paragraph(publication)
+
+    # Add volunteering section
+    if volunteering:
+        doc.add_heading('Volunteering', level=1)
+        for vol in volunteering:
+            doc.add_paragraph(vol)
+
+    # Add competitions section
+    if competitions:
+        doc.add_heading('Competitions', level=1)
+        for competition in competitions:
+            doc.add_paragraph(competition)
+
+    # Add conferences and workshops section
+    if conferences_workshops:
+        doc.add_heading('Conferences and Workshops', level=1)
+        for conference in conferences_workshops:
+            doc.add_paragraph(conference)
+
+    # Add tests section
+    if tests:
+        doc.add_heading('Tests', level=1)
+        for test in tests:
+            doc.add_paragraph(test)
+
+    # Add patents section
+    if patents:
+        doc.add_heading('Patents', level=1)
+        for patent in patents:
+            doc.add_paragraph(patent)
+
+    # Add scholarships section
+    if scholarships:
+        doc.add_heading('Scholarships', level=1)
+        for scholarship in scholarships:
+            doc.add_paragraph(scholarship)
+
+    # Add extracurricular activities section
+    if extracurricular_activities:
+        doc.add_heading('Extra Curricular Activities', level=1)
+        for activity in extracurricular_activities:
+            doc.add_paragraph(activity)
     
-        # Set margins for the document
-        for section in doc.sections:
-            set_margins(section, left=0.5, right=0.5, top=0.5, bottom=0.5)
+    temp_docx = "resume.docx"
+    doc.save(temp_docx)
     
-        # Add a heading to the document
-        if name:
-            doc.add_heading(name, 0)
+    # Convert the DOCX file to PDF
+    temp_pdf = "resume.pdf"
+    convert(temp_docx, temp_pdf)
     
-        # Add contact information
-        if contact_info:
-            doc.add_paragraph(contact_info)
-    
-        # Add professional summary
-        if professional_summary:
-            doc.add_heading('Professional Summary', level=1)
-            doc.add_paragraph(professional_summary)
-    
-        # Add education section
-        if education:
-            doc.add_heading('Education', level=1)
-            for edu in education:
-                doc.add_paragraph(f"{edu['institution']} - {edu['degree']} ({edu['cgpa']}) - {edu['dates']}")
-    
-        # Add experience section
-        if experience:
-            doc.add_heading('Experience', level=1)
-            for exp in experience:
-                doc.add_paragraph(f"{exp['title']} at {exp['company']} ({exp['dates']})")
-                doc.add_paragraph(exp['description'], style='List Bullet')
-    
-        # Add projects section
-        if projects:
-            doc.add_heading('Projects', level=1)
-            for proj in projects:
-                doc.add_paragraph(proj['title'])
-                doc.add_paragraph(proj['description'], style='List Bullet')
-    
-        # Add skills section
-        if skills:
-            doc.add_heading('Skills', level=1)
-            for skill in skills:
-                doc.add_paragraph(f"{skill['category']}: {', '.join(skill['skills'])}")
-    
-        # Add languages section
-        if languages:
-            doc.add_heading('Languages', level=1)
-            doc.add_paragraph(', '.join(languages))
-    
-        # Add links section
-        if links:
-            doc.add_heading('Links', level=1)
-            for link in links:
-                doc.add_paragraph(link)
-    
-        # Add awards section
-        if awards:
-            doc.add_heading('Awards', level=1)
-            for award in awards:
-                doc.add_paragraph(award)
-    
-        # Add certifications section
-        if certifications:
-            doc.add_heading('Certifications', level=1)
-            for certification in certifications:
-                doc.add_paragraph(certification)
-    
-        # Add publications section
-        if publications:
-            doc.add_heading('Publications', level=1)
-            for publication in publications:
-                doc.add_paragraph(publication)
-    
-        # Add volunteering section
-        if volunteering:
-            doc.add_heading('Volunteering', level=1)
-            for vol in volunteering:
-                doc.add_paragraph(vol)
-    
-        # Add competitions section
-        if competitions:
-            doc.add_heading('Competitions', level=1)
-            for competition in competitions:
-                doc.add_paragraph(competition)
-    
-        # Add conferences and workshops section
-        if conferences_workshops:
-            doc.add_heading('Conferences and Workshops', level=1)
-            for conference in conferences_workshops:
-                doc.add_paragraph(conference)
-    
-        # Add tests section
-        if tests:
-            doc.add_heading('Tests', level=1)
-            for test in tests:
-                doc.add_paragraph(test)
-    
-        # Add patents section
-        if patents:
-            doc.add_heading('Patents', level=1)
-            for patent in patents:
-                doc.add_paragraph(patent)
-    
-        # Add scholarships section
-        if scholarships:
-            doc.add_heading('Scholarships', level=1)
-            for scholarship in scholarships:
-                doc.add_paragraph(scholarship)
-    
-        # Add extracurricular activities section
-        if extracurricular_activities:
-            doc.add_heading('Extra Curricular Activities', level=1)
-            for activity in extracurricular_activities:
-                doc.add_paragraph(activity)
-        
-        temp_docx = "resume.docx"
-        doc.save(temp_docx)
-        
-        # Convert the DOCX file to PDF
-        temp_pdf = "resume.pdf"
-        convert(temp_docx, temp_pdf)
-        
-        return temp_pdf
-    finally:
-        comtypes.CoUninitialize()
+    return temp_pdf
     
     
 # Function to estimate text area height based on content length
