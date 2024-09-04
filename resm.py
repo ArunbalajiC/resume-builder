@@ -251,11 +251,6 @@ def extract_sections_from_resume(resume_text):
                 break
     return details
 
-import docx
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from io import BytesIO
-
 def generate_resume(
     name=None,
     contact_info=None,
