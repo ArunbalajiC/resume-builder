@@ -2,8 +2,20 @@ import streamlit as st
 import docx
 import PyPDF2
 from duckduckgo_search import DDGS
-from docx2pdf import convert
 import re
+
+import docx
+import pdfkit
+from bs4 import BeautifulSoup
+
+def docx_to_html(docx_file):
+    doc = docx.Document(docx_file)
+    html = '<html><body>'
+    for para in doc.paragraphs:
+        html += f'<p>{para.text}</p>'
+    html += '</body></html>'
+    return html
+
 
 # Function to extract text from PDF
 def extract_text_from_pdf(pdf_file):
@@ -381,8 +393,11 @@ def generate_resume(
     # Save the DOCX file
     doc.save('resume.docx')
 
-    # Convert DOCX to PDF using docx2pdf
-    convert('resume.docx', 'resume.pdf')
+    # Convert DOCX to HTML
+    html_content = docx_to_html('resume.docx')
+
+    # Convert HTML to PDF using pdfkit
+    pdfkit.from_string(html_content, 'resume.pdf')
 
     return 'resume.pdf'
     
