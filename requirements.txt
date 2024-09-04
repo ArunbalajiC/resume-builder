@@ -3,4 +3,3 @@ python-docx
 PyPDF2
 duckduckgo-search
 docx2pdf
-pywin32
