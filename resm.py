@@ -2,8 +2,7 @@ import streamlit as st
 import docx
 import PyPDF2
 from duckduckgo_search import DDGS
-import pdfkit
-from docx2html import convert
+from docx2pdf import convert
 import re
 
 # Function to extract text from PDF
@@ -382,11 +381,8 @@ def generate_resume(
     # Save the DOCX file
     doc.save('resume.docx')
 
-    # Convert DOCX to HTML
-    html_content = convert('resume.docx')
-
-    # Convert HTML to PDF using pdfkit
-    pdfkit.from_string(html_content, 'resume.pdf')
+    # Convert DOCX to PDF using docx2pdf
+    convert('resume.docx', 'resume.pdf')
 
     return 'resume.pdf'
     
