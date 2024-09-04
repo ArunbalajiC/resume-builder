@@ -4,3 +4,5 @@ PyPDF2
 duckduckgo-search
 docx2pdf
 pypandoc
+pdfkit
+docx2html
