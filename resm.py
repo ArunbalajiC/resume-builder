@@ -4,7 +4,7 @@ import PyPDF2
 from duckduckgo_search import DDGS
 from docx2pdf import convert
 import re
-import ctypes
+import win32api
 
 # Function to extract text from PDF
 def extract_text_from_pdf(pdf_file):
@@ -264,7 +264,7 @@ def generate_resume(
     output_pdf_file='resume.pdf'
 ):
     # pythoncom.CoInitialize()
-    ctypes.windll.user32.CoInitialize()
+    win32api.CoInitialize()
     # Create a new Word document
     doc = docx.Document()
 
