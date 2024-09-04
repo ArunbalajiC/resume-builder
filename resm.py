@@ -4,6 +4,7 @@ import PyPDF2
 from duckduckgo_search import DDGS
 from docx2pdf import convert
 import re
+import comtypes.client
 
 # Function to extract text from PDF
 def extract_text_from_pdf(pdf_file):
