@@ -2,8 +2,8 @@ import streamlit as st
 import docx
 import PyPDF2
 from duckduckgo_search import DDGS
-import docx
-import subprocess
+import pdfkit
+from docx2html import convert
 import re
 
 # Function to extract text from PDF
@@ -380,12 +380,15 @@ def generate_resume(
             doc.add_paragraph(activity)
     
     # Save the DOCX file
-    doc.save(output_file)
-    
-    # Convert the DOCX file to PDF using LibreOffice
-    subprocess.run(['libreoffice', '--headless', '--convert-to', 'pdf', output_file], check=True)
-    
-    return output_pdf_file
+    doc.save('resume.docx')
+
+    # Convert DOCX to HTML
+    html_content = convert('resume.docx')
+
+    # Convert HTML to PDF using pdfkit
+    pdfkit.from_string(html_content, 'resume.pdf')
+
+    return 'resume.pdf'
     
     
 # Function to estimate text area height based on content length
