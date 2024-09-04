@@ -2,6 +2,5 @@ streamlit
 python-docx
 PyPDF2
 duckduckgo-search
-pdfkit
 python-docx
-beautifulsoup4
+reportlab
