@@ -276,6 +276,7 @@ def generate_resume(
     output_file='resume.docx',
     output_pdf_file='resume.pdf'
 ):
+    # Create DOCX file
     doc = docx.Document()
 
     # Add content to the DOCX file
@@ -393,7 +394,7 @@ def generate_resume(
 
     def add_section_content(content, y):
         c.setFont("Helvetica", 12)
-        y = add_text(c, content, margin, y, usable_width)
+        y = add_text(c, content, y, y, usable_width)
         y -= 20
         return y
 
@@ -499,7 +500,6 @@ def generate_resume(
         f.write(buffer.getvalue())
 
     return output_pdf_file
-
     
     
 # Function to estimate text area height based on content length
