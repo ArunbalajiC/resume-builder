@@ -3,7 +3,7 @@ import docx
 import PyPDF2
 from duckduckgo_search import DDGS
 import docx
-import pypandoc
+import subprocess
 import re
 
 # Function to extract text from PDF
@@ -382,8 +382,8 @@ def generate_resume(
     # Save the DOCX file
     doc.save(output_file)
     
-    # Convert the DOCX file to PDF
-    output = pypandoc.convert_file(output_file, 'pdf', outputfile=output_pdf_file)
+    # Convert the DOCX file to PDF using LibreOffice
+    subprocess.run(['libreoffice', '--headless', '--convert-to', 'pdf', output_file], check=True)
     
     return output_pdf_file
     
