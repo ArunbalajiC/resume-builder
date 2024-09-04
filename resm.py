@@ -3,10 +3,10 @@ import docx
 import PyPDF2
 from duckduckgo_search import DDGS
 import re
-
 import docx
-import pdfkit
-from bs4 import BeautifulSoup
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from io import BytesIO
 
 def docx_to_html(docx_file):
     doc = docx.Document(docx_file)
@@ -251,6 +251,11 @@ def extract_sections_from_resume(resume_text):
                 break
     return details
 
+import docx
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from io import BytesIO
+
 def generate_resume(
     name=None,
     contact_info=None,
@@ -276,130 +281,223 @@ def generate_resume(
 ):
     doc = docx.Document()
 
-    # Set margins for the document
-    for section in doc.sections:
-        set_margins(section, left=0.5, right=0.5, top=0.5, bottom=0.5)
-
-    # Add a heading to the document
+    # Add content to the DOCX file
     if name:
-        doc.add_heading(name, 0)
-
-    # Add contact information
+        doc.add_heading(name, level=0)
     if contact_info:
         doc.add_paragraph(contact_info)
-
-    # Add professional summary
     if professional_summary:
         doc.add_heading('Professional Summary', level=1)
         doc.add_paragraph(professional_summary)
-
-    # Add education section
     if education:
         doc.add_heading('Education', level=1)
         for edu in education:
             doc.add_paragraph(f"{edu['institution']} - {edu['degree']} ({edu['cgpa']}) - {edu['dates']}")
-
-    # Add experience section
     if experience:
         doc.add_heading('Experience', level=1)
         for exp in experience:
             doc.add_paragraph(f"{exp['title']} at {exp['company']} ({exp['dates']})")
             doc.add_paragraph(exp['description'], style='List Bullet')
-
-    # Add projects section
     if projects:
         doc.add_heading('Projects', level=1)
         for proj in projects:
             doc.add_paragraph(proj['title'])
             doc.add_paragraph(proj['description'], style='List Bullet')
-
-    # Add skills section
     if skills:
         doc.add_heading('Skills', level=1)
         for skill in skills:
             doc.add_paragraph(f"{skill['category']}: {', '.join(skill['skills'])}")
-
-    # Add languages section
     if languages:
         doc.add_heading('Languages', level=1)
         doc.add_paragraph(', '.join(languages))
-
-    # Add links section
     if links:
         doc.add_heading('Links', level=1)
         for link in links:
             doc.add_paragraph(link)
-
-    # Add awards section
     if awards:
         doc.add_heading('Awards', level=1)
         for award in awards:
             doc.add_paragraph(award)
-
-    # Add certifications section
     if certifications:
         doc.add_heading('Certifications', level=1)
         for certification in certifications:
             doc.add_paragraph(certification)
-
-    # Add publications section
     if publications:
         doc.add_heading('Publications', level=1)
         for publication in publications:
             doc.add_paragraph(publication)
-
-    # Add volunteering section
     if volunteering:
         doc.add_heading('Volunteering', level=1)
         for vol in volunteering:
             doc.add_paragraph(vol)
-
-    # Add competitions section
     if competitions:
         doc.add_heading('Competitions', level=1)
         for competition in competitions:
             doc.add_paragraph(competition)
-
-    # Add conferences and workshops section
     if conferences_workshops:
         doc.add_heading('Conferences and Workshops', level=1)
         for conference in conferences_workshops:
             doc.add_paragraph(conference)
-
-    # Add tests section
     if tests:
         doc.add_heading('Tests', level=1)
         for test in tests:
             doc.add_paragraph(test)
-
-    # Add patents section
     if patents:
         doc.add_heading('Patents', level=1)
         for patent in patents:
             doc.add_paragraph(patent)
-
-    # Add scholarships section
     if scholarships:
         doc.add_heading('Scholarships', level=1)
         for scholarship in scholarships:
             doc.add_paragraph(scholarship)
-
-    # Add extracurricular activities section
     if extracurricular_activities:
         doc.add_heading('Extra Curricular Activities', level=1)
         for activity in extracurricular_activities:
             doc.add_paragraph(activity)
     
     # Save the DOCX file
-    doc.save('resume.docx')
+    doc.save(output_file)
 
-    # Convert DOCX to HTML
-    html_content = docx_to_html('resume.docx')
+    # Convert DOCX to PDF
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    y_position = height - 40
 
-    # Convert HTML to PDF using pdfkit
-    pdfkit.from_string(html_content, 'resume.pdf')
+    # Function to add text with automatic line breaks
+    def add_text(c, text, x, y, max_width):
+        lines = []
+        words = text.split()
+        line = ''
+        for word in words:
+            if c.stringWidth(line + word, 'Helvetica', 12) < max_width:
+                line += (word + ' ')
+            else:
+                lines.append(line)
+                line = word + ' '
+        lines.append(line)
+        
+        for line in lines:
+            c.drawString(x, y, line)
+            y -= 14  # Line height
+        return y
 
-    return 'resume.pdf'
+    # Add content to the PDF
+    def add_section_title(title, y):
+        c.setFont("Helvetica-Bold", 14)
+        y = add_text(c, title, 40, y, width - 80)
+        y -= 10
+        return y
+
+    def add_section_content(content, y):
+        c.setFont("Helvetica", 12)
+        y = add_text(c, content, 40, y, width - 80)
+        y -= 20
+        return y
+
+    if name:
+        c.setFont("Helvetica-Bold", 16)
+        y_position = add_text(c, name, 40, y_position, width - 80)
+        y_position -= 30
+
+    if contact_info:
+        c.setFont("Helvetica", 12)
+        y_position = add_text(c, contact_info, 40, y_position, width - 80)
+        y_position -= 30
+
+    if professional_summary:
+        y_position = add_section_title("Professional Summary", y_position)
+        y_position = add_section_content(professional_summary, y_position)
+
+    if education:
+        y_position = add_section_title("Education", y_position)
+        for edu in education:
+            y_position = add_section_content(f"{edu['institution']} - {edu['degree']} ({edu['cgpa']}) - {edu['dates']}", y_position)
+
+    if experience:
+        y_position = add_section_title("Experience", y_position)
+        for exp in experience:
+            y_position = add_section_content(f"{exp['title']} at {exp['company']} ({exp['dates']})", y_position)
+            y_position = add_section_content(exp['description'], y_position)
+
+    if projects:
+        y_position = add_section_title("Projects", y_position)
+        for proj in projects:
+            y_position = add_section_content(proj['title'], y_position)
+            y_position = add_section_content(proj['description'], y_position)
+
+    if skills:
+        y_position = add_section_title("Skills", y_position)
+        for skill in skills:
+            y_position = add_section_content(f"{skill['category']}: {', '.join(skill['skills'])}", y_position)
+
+    if languages:
+        y_position = add_section_title("Languages", y_position)
+        y_position = add_section_content(', '.join(languages), y_position)
+
+    if links:
+        y_position = add_section_title("Links", y_position)
+        for link in links:
+            y_position = add_section_content(link, y_position)
+
+    if awards:
+        y_position = add_section_title("Awards", y_position)
+        for award in awards:
+            y_position = add_section_content(award, y_position)
+
+    if certifications:
+        y_position = add_section_title("Certifications", y_position)
+        for certification in certifications:
+            y_position = add_section_content(certification, y_position)
+
+    if publications:
+        y_position = add_section_title("Publications", y_position)
+        for publication in publications:
+            y_position = add_section_content(publication, y_position)
+
+    if volunteering:
+        y_position = add_section_title("Volunteering", y_position)
+        for vol in volunteering:
+            y_position = add_section_content(vol, y_position)
+
+    if competitions:
+        y_position = add_section_title("Competitions", y_position)
+        for competition in competitions:
+            y_position = add_section_content(competition, y_position)
+
+    if conferences_workshops:
+        y_position = add_section_title("Conferences and Workshops", y_position)
+        for conference in conferences_workshops:
+            y_position = add_section_content(conference, y_position)
+
+    if tests:
+        y_position = add_section_title("Tests", y_position)
+        for test in tests:
+            y_position = add_section_content(test, y_position)
+
+    if patents:
+        y_position = add_section_title("Patents", y_position)
+        for patent in patents:
+            y_position = add_section_content(patent, y_position)
+
+    if scholarships:
+        y_position = add_section_title("Scholarships", y_position)
+        for scholarship in scholarships:
+            y_position = add_section_content(scholarship, y_position)
+
+    if extracurricular_activities:
+        y_position = add_section_title("Extra Curricular Activities", y_position)
+        for activity in extracurricular_activities:
+            y_position = add_section_content(activity, y_position)
+
+    # Finish the PDF
+    c.save()
+    
+    with open(output_pdf_file, 'wb') as f:
+        f.write(buffer.getvalue())
+
+    return output_pdf_file
+
     
     
 # Function to estimate text area height based on content length
