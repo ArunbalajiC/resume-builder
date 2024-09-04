@@ -8,6 +8,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 
+
 def docx_to_html(docx_file):
     doc = docx.Document(docx_file)
     html = '<html><body>'
@@ -251,6 +252,7 @@ def extract_sections_from_resume(resume_text):
                 break
     return details
 
+
 def generate_resume(
     name=None,
     contact_info=None,
@@ -355,11 +357,13 @@ def generate_resume(
 
     # Convert DOCX to PDF
     buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
-    y_position = height - 40
+    c = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+    margin = 40
+    usable_width = width - 2 * margin
+    usable_height = height - 2 * margin
+    y_position = height - margin
 
-    # Function to add text with automatic line breaks
     def add_text(c, text, x, y, max_width):
         lines = []
         words = text.split()
@@ -373,31 +377,34 @@ def generate_resume(
         lines.append(line)
         
         for line in lines:
+            if y < margin:
+                c.showPage()
+                c.setFont("Helvetica", 12)
+                y = height - margin
             c.drawString(x, y, line)
             y -= 14  # Line height
         return y
 
-    # Add content to the PDF
     def add_section_title(title, y):
         c.setFont("Helvetica-Bold", 14)
-        y = add_text(c, title, 40, y, width - 80)
+        y = add_text(c, title, margin, y, usable_width)
         y -= 10
         return y
 
     def add_section_content(content, y):
         c.setFont("Helvetica", 12)
-        y = add_text(c, content, 40, y, width - 80)
+        y = add_text(c, content, margin, y, usable_width)
         y -= 20
         return y
 
     if name:
         c.setFont("Helvetica-Bold", 16)
-        y_position = add_text(c, name, 40, y_position, width - 80)
+        y_position = add_text(c, name, margin, y_position, usable_width)
         y_position -= 30
 
     if contact_info:
         c.setFont("Helvetica", 12)
-        y_position = add_text(c, contact_info, 40, y_position, width - 80)
+        y_position = add_text(c, contact_info, margin, y_position, usable_width)
         y_position -= 30
 
     if professional_summary:
