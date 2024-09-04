@@ -7,6 +7,9 @@ import docx
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+
 
 
 def docx_to_html(docx_file):
