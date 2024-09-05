@@ -24,6 +24,7 @@ def extract_text_from_pdf(pdf_file):
     text = ''.join([page.extract_text() for page in pdf.pages])
     return text
 
+
 # Function to set document margins
 def set_margins(section, left=1, right=1, top=1, bottom=1):
     section.left_margin = docx.shared.Inches(left)
@@ -31,30 +32,31 @@ def set_margins(section, left=1, right=1, top=1, bottom=1):
     section.top_margin = docx.shared.Inches(top)
     section.bottom_margin = docx.shared.Inches(bottom)
 
+
 # Function to generate resume content as Markdown (for preview)
 def generate_resume_markdown(
-    name=None,
-    contact_info=None,
-    professional_summary=None,
-    education=None,
-    experience=None,
-    projects=None,
-    skills=None,
-    languages=None,
-    links=None,
-    awards=None,
-    certifications=None,
-    publications=None,
-    volunteering=None,
-    competitions=None,
-    conferences_workshops=None,
-    tests=None,
-    patents=None,
-    scholarships=None,
-    extracurricular_activities=None,
+        name=None,
+        contact_info=None,
+        professional_summary=None,
+        education=None,
+        experience=None,
+        projects=None,
+        skills=None,
+        languages=None,
+        links=None,
+        awards=None,
+        certifications=None,
+        publications=None,
+        volunteering=None,
+        competitions=None,
+        conferences_workshops=None,
+        tests=None,
+        patents=None,
+        scholarships=None,
+        extracurricular_activities=None,
 ):
     content = ""
-    
+
     if name:
         content += f"# {name}\n\n"
 
@@ -145,6 +147,7 @@ def generate_resume_markdown(
 
     return content
 
+
 def extract_sections_from_resume(resume_text):
     part1 = """
         Extract the following details from the resume text below and start them with the exact same title as given below, and if the detail does not exist use the title and fill it with 'NA' and maintain the exact same order:
@@ -220,7 +223,8 @@ def extract_sections_from_resume(resume_text):
     details = {key: "NA" for key in section_headers.keys()}
 
     # Sort section headers by their positions in the text
-    sorted_sections = sorted([(header, resume_result.find(header)) for header in section_headers.values() if resume_result.find(header) != -1], key=lambda x: x[1])
+    sorted_sections = sorted([(header, resume_result.find(header)) for header in section_headers.values() if
+                              resume_result.find(header) != -1], key=lambda x: x[1])
 
     for i, (current_header, start_pos) in enumerate(sorted_sections):
         # Determine the end position as the start of the next header
@@ -237,7 +241,7 @@ def extract_sections_from_resume(resume_text):
                 else:
                     content = content.translate(str.maketrans('', '', '-'))
                     # Process each line to remove starting non-alphabetic characters and filter out empty lines
-                    
+
                     cleaned_lines = []
                     for line in content.split('\n'):
                         # Remove starting non-alphabetic characters
@@ -247,34 +251,34 @@ def extract_sections_from_resume(resume_text):
 
                     # Join the cleaned lines back together
                     cleaned_text = '\n'.join(cleaned_lines) if content else None
-                    
+
                     details[key] = cleaned_text if content else None
                 break
     return details
 
 
 def generate_resume(
-    name=None,
-    contact_info=None,
-    professional_summary=None,
-    education=None,
-    experience=None,
-    projects=None,
-    skills=None,
-    languages=None,
-    links=None,
-    awards=None,
-    certifications=None,
-    publications=None,
-    volunteering=None,
-    competitions=None,
-    conferences_workshops=None,
-    tests=None,
-    patents=None,
-    scholarships=None,
-    extracurricular_activities=None,
-    output_file='resume.docx',
-    output_pdf_file='resume.pdf'
+        name=None,
+        contact_info=None,
+        professional_summary=None,
+        education=None,
+        experience=None,
+        projects=None,
+        skills=None,
+        languages=None,
+        links=None,
+        awards=None,
+        certifications=None,
+        publications=None,
+        volunteering=None,
+        competitions=None,
+        conferences_workshops=None,
+        tests=None,
+        patents=None,
+        scholarships=None,
+        extracurricular_activities=None,
+        output_file='resume.docx',
+        output_pdf_file='resume.pdf'
 ):
     doc = docx.Document()
 
@@ -351,7 +355,7 @@ def generate_resume(
         doc.add_heading('Extra Curricular Activities', level=1)
         for activity in extracurricular_activities:
             doc.add_paragraph(activity)
-    
+
     # Save the DOCX file
     doc.save(output_file)
 
@@ -375,7 +379,7 @@ def generate_resume(
                 lines.append(line)
                 line = word + ' '
         lines.append(line)
-        
+
         for line in lines:
             if y < margin:
                 c.showPage()
@@ -414,7 +418,8 @@ def generate_resume(
     if education:
         y_position = add_section_title("Education", y_position)
         for edu in education:
-            y_position = add_section_content(f"{edu['institution']} - {edu['degree']} ({edu['cgpa']}) - {edu['dates']}", y_position)
+            y_position = add_section_content(f"{edu['institution']} - {edu['degree']} ({edu['cgpa']}) - {edu['dates']}",
+                                             y_position)
 
     if experience:
         y_position = add_section_title("Experience", y_position)
@@ -494,21 +499,22 @@ def generate_resume(
 
     # Finish the PDF
     c.save()
-    
+
     with open(output_pdf_file, 'wb') as f:
         f.write(buffer.getvalue())
 
     return output_pdf_file
-    
-    
+
+
 # Function to estimate text area height based on content length
 def estimate_height(text):
     estimated_height = int(len(text) / 1.8)  # Adjust the divisor to control height increments
     return 300 if estimated_height > 300 else estimated_height
 
+
 # Streamlit app code
 def main():
-    st.title("Resume Builder")
+    st.title("Chinki's Resume Builder")
 
     # Step 1: Ask user if they have a current resume
     has_resume = st.radio("Do you have a current resume?", ("Yes", "No"))
@@ -553,65 +559,72 @@ def main():
             st.success("Resume text extracted successfully!")
         else:
             st.warning("Please upload a PDF file.")
-
-    # Step 2: Display fields and get user inputs
+    
+    # Step 2: Add input for target job role
+    target_job_role = st.text_input("Enter the target job role")
+    
+    # Step 3: Display fields and get user inputs
     st.header("Fill in or Edit Your Resume Information")
+    st.text("Leave the fields empty if you do not want to include the section in your resume.")
+    
     for key in fields:
         content = fields[key]
         height = estimate_height(content) if content is not None else 0
         fields[key] = st.text_area(key, value=content, height=height)
 
+        # Only add expanders and buttons to specific sections
+        if key in ["Professional Summary", "Skills", "Certifications", "Conferences and Workshops"]:
+            with st.expander(f"Ideal {key}", expanded=False):
+                if st.button(f"Generate Ideal {key}", key=f"button_{key}"):
+                    if target_job_role:
+                        # Construct the prompt based on existing content
+                        if key == "Professional Summary":
+                            prompt = f"Generate only the most ideal professional summary for a resume for someone who is targeting the role of a {target_job_role}. Respond without starting with any forewords."
+                        else:
+                            if fields[key]:  # If there's existing content
+                                prompt = f"Based on the following existing {key.lower()}, suggest additional {key.lower()} that could enhance this resume for a {target_job_role} role:\n\n{fields[key]}"
+                            else:
+                                prompt = f"Generate only the most ideal {key.lower()} for a resume for someone who is targeting the role of a {target_job_role}. Respond without starting with any forewords."
+
+                        # Generate ideal content using DDGS chat
+                        result = DDGS().chat(prompt, model='claude-3-haiku')
+                        ideal_content = result  # Extract the response
+
+                        # Display the generated ideal content
+                        st.write(f"Ideal {key}:\n\n{ideal_content}")
+                    else:
+                        st.warning("Please enter the target job role before generating content.")
+
     # Preview resume on the right side
     with st.expander("Preview Resume", expanded=False):
         preview_content = generate_resume_markdown(
-            name = fields["Name"] if fields["Name"] else None,
-            contact_info = fields["Contact Information"] if fields["Contact Information"] else None,
-            professional_summary = fields["Professional Summary"] if fields["Professional Summary"] else None,
-            education = (
-                [{'institution': parts[0], 'degree': parts[1] if len(parts) > 1 else "", 'cgpa': parts[2] if len(parts) > 2 else "", 'dates': parts[3] if len(parts) > 3 else ""}
-                for x in fields["Education"].split('\n') if x and (parts := x.split(' - ')) and len(parts) >= 1]
-                if fields["Education"] else None
-            ),
-            experience = (
-                [{'title': parts_at[0], 'company': parts_at[1].split(' (')[0] if len(parts_at) > 1 else "", 'dates': parts_paren[1][:-1] if len(parts_paren) > 1 else "", 'description': fields["Experience"].split('\n')[1] if len(fields["Experience"].split('\n')) > 1 else ""}
-                for x in fields["Experience"].split('\n') if x and (parts_at := x.split(' at ')) and (parts_paren := x.split(' (')) and len(parts_at) >= 1]
-                if fields["Experience"] else None
-            ),
-            projects = (
-                [{'title': parts[0], 'description': parts[1] if len(parts) > 1 else ""}
-                for x in fields["Projects"].split('\n\n') if (parts := x.split('\n')) and len(parts) > 0]
-                if fields["Projects"] else None
-            ),
-            skills = (
-                [{'category': 'General Skills', 'skills': fields["Skills"].split(', ')}]
-                if fields["Skills"] else None
-            ),
-            languages = fields["Languages"].split('\n') if fields["Languages"] else None,
-            links = fields["Links"].split('\n') if fields["Links"] else None,
-            awards = fields["Awards"].split('\n') if fields["Awards"] else None,
-            certifications = fields["Certifications"].split('\n') if fields["Certifications"] else None,
-            publications = fields["Publications"].split('\n') if fields["Publications"] else None,
-            volunteering = fields["Volunteering"].split('\n') if fields["Volunteering"] else None,
-            competitions = fields["Competitions"].split('\n') if fields["Competitions"] else None,
-            conferences_workshops = fields["Conferences and Workshops"].split('\n') if fields["Conferences and Workshops"] else None,
-            tests = fields["Tests"].split('\n') if fields["Tests"] else None,
-            patents = fields["Patents"].split('\n') if fields["Patents"] else None,
-            scholarships = fields["Scholarships"].split('\n') if fields["Scholarships"] else None,
-            extracurricular_activities = fields["Extracurricular Activities"].split('\n') if fields["Extracurricular Activities"] else None
-
-        )
-        st.markdown(preview_content)
-
-    # Step 3: Generate Resume on button click
-    if st.button("Generate Resume"):
-        pdf_file = generate_resume(
             name=fields["Name"] if fields["Name"] else None,
             contact_info=fields["Contact Information"] if fields["Contact Information"] else None,
             professional_summary=fields["Professional Summary"] if fields["Professional Summary"] else None,
-            education=[{'institution': parts[0], 'degree': parts[1] if len(parts) > 1 else "", 'cgpa': parts[2] if len(parts) > 2 else "", 'dates': parts[3] if len(parts) > 3 else ""} for x in fields["Education"].split('\n') if x and (parts := x.split(' - ')) and len(parts) >= 1] if fields["Education"] else None,
-            experience=[{'title': parts_at[0], 'company': parts_at[1].split(' (')[0] if len(parts_at) > 1 else "", 'dates': parts_paren[1][:-1] if len(parts_paren) > 1 else "", 'description': fields["Experience"].split('\n')[1] if len(fields["Experience"].split('\n')) > 1 else ""} for x in fields["Experience"].split('\n') if x and (parts_at := x.split(' at ')) and (parts_paren := x.split(' (')) and len(parts_at) >= 1] if fields["Experience"] else None,
-            projects=[{'title': parts[0], 'description': parts[1] if len(parts) > 1 else ""} for x in fields["Projects"].split('\n\n') if (parts := x.split('\n')) and len(parts) > 0] if fields["Projects"] else None,
-            skills=[{'category': 'General Skills', 'skills': fields["Skills"].split(', ')}] if fields["Skills"] else None,
+            education=(
+                [{'institution': parts[0], 'degree': parts[1] if len(parts) > 1 else "",
+                  'cgpa': parts[2] if len(parts) > 2 else "", 'dates': parts[3] if len(parts) > 3 else ""}
+                 for x in fields["Education"].split('\n') if x and (parts := x.split(' - ')) and len(parts) >= 1]
+                if fields["Education"] else None
+            ),
+            experience=(
+                [{'title': parts_at[0], 'company': parts_at[1].split(' (')[0] if len(parts_at) > 1 else "",
+                  'dates': parts_paren[1][:-1] if len(parts_paren) > 1 else "",
+                  'description': fields["Experience"].split('\n')[1] if len(
+                      fields["Experience"].split('\n')) > 1 else ""}
+                 for x in fields["Experience"].split('\n') if
+                 x and (parts_at := x.split(' at ')) and (parts_paren := x.split(' (')) and len(parts_at) >= 1]
+                if fields["Experience"] else None
+            ),
+            projects=(
+                [{'title': parts[0], 'description': parts[1] if len(parts) > 1 else ""}
+                 for x in fields["Projects"].split('\n\n') if (parts := x.split('\n')) and len(parts) > 0]
+                if fields["Projects"] else None
+            ),
+            skills=(
+                [{'category': 'General Skills', 'skills': fields["Skills"].split(', ')}]
+                if fields["Skills"] else None
+            ),
             languages=fields["Languages"].split('\n') if fields["Languages"] else None,
             links=fields["Links"].split('\n') if fields["Links"] else None,
             awards=fields["Awards"].split('\n') if fields["Awards"] else None,
@@ -619,16 +632,58 @@ def main():
             publications=fields["Publications"].split('\n') if fields["Publications"] else None,
             volunteering=fields["Volunteering"].split('\n') if fields["Volunteering"] else None,
             competitions=fields["Competitions"].split('\n') if fields["Competitions"] else None,
-            conferences_workshops=fields["Conferences and Workshops"].split('\n') if fields["Conferences and Workshops"] else None,
+            conferences_workshops=fields["Conferences and Workshops"].split('\n') if fields[
+                "Conferences and Workshops"] else None,
             tests=fields["Tests"].split('\n') if fields["Tests"] else None,
             patents=fields["Patents"].split('\n') if fields["Patents"] else None,
             scholarships=fields["Scholarships"].split('\n') if fields["Scholarships"] else None,
-            extracurricular_activities=fields["Extracurricular Activities"].split('\n') if fields["Extracurricular Activities"] else None
+            extracurricular_activities=fields["Extracurricular Activities"].split('\n') if fields[
+                "Extracurricular Activities"] else None
+
         )
-        
+        st.markdown(preview_content)
+
+    # Step 4: Generate Resume on button click
+    if st.button("Generate Resume"):
+        pdf_file = generate_resume(
+            name=fields["Name"] if fields["Name"] else None,
+            contact_info=fields["Contact Information"] if fields["Contact Information"] else None,
+            professional_summary=fields["Professional Summary"] if fields["Professional Summary"] else None,
+            education=[{'institution': parts[0], 'degree': parts[1] if len(parts) > 1 else "",
+                        'cgpa': parts[2] if len(parts) > 2 else "", 'dates': parts[3] if len(parts) > 3 else ""} for x
+                       in fields["Education"].split('\n') if x and (parts := x.split(' - ')) and len(parts) >= 1] if
+            fields["Education"] else None,
+            experience=[{'title': parts_at[0], 'company': parts_at[1].split(' (')[0] if len(parts_at) > 1 else "",
+                         'dates': parts_paren[1][:-1] if len(parts_paren) > 1 else "",
+                         'description': fields["Experience"].split('\n')[1] if len(
+                             fields["Experience"].split('\n')) > 1 else ""} for x in fields["Experience"].split('\n') if
+                        x and (parts_at := x.split(' at ')) and (parts_paren := x.split(' (')) and len(
+                            parts_at) >= 1] if fields["Experience"] else None,
+            projects=[{'title': parts[0], 'description': parts[1] if len(parts) > 1 else ""} for x in
+                      fields["Projects"].split('\n\n') if (parts := x.split('\n')) and len(parts) > 0] if fields[
+                "Projects"] else None,
+            skills=[{'category': 'General Skills', 'skills': fields["Skills"].split(', ')}] if fields[
+                "Skills"] else None,
+            languages=fields["Languages"].split('\n') if fields["Languages"] else None,
+            links=fields["Links"].split('\n') if fields["Links"] else None,
+            awards=fields["Awards"].split('\n') if fields["Awards"] else None,
+            certifications=fields["Certifications"].split('\n') if fields["Certifications"] else None,
+            publications=fields["Publications"].split('\n') if fields["Publications"] else None,
+            volunteering=fields["Volunteering"].split('\n') if fields["Volunteering"] else None,
+            competitions=fields["Competitions"].split('\n') if fields["Competitions"] else None,
+            conferences_workshops=fields["Conferences and Workshops"].split('\n') if fields[
+                "Conferences and Workshops"] else None,
+            tests=fields["Tests"].split('\n') if fields["Tests"] else None,
+            patents=fields["Patents"].split('\n') if fields["Patents"] else None,
+            scholarships=fields["Scholarships"].split('\n') if fields["Scholarships"] else None,
+            extracurricular_activities=fields["Extracurricular Activities"].split('\n') if fields[
+                "Extracurricular Activities"] else None
+        )
+
         # Download link for the PDF
         with open(pdf_file, "rb") as f:
             st.download_button("Download PDF", f, file_name="resume.pdf")
+
 
 if __name__ == "__main__":
     main()
