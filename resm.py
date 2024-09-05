@@ -514,7 +514,7 @@ def estimate_height(text):
 
 # Streamlit app code
 def main():
-    st.title("Chinki's Resume Builder")
+    st.title("Resume Builder")
 
     # Step 1: Ask user if they have a current resume
     has_resume = st.radio("Do you have a current resume?", ("Yes", "No"))
