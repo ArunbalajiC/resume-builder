@@ -561,11 +561,11 @@ def main():
             st.warning("Please upload a PDF file.")
     
     # Step 2: Add input for target job role
-    target_job_role = st.text_input("Enter the target job role")
+    target_job_role = st.text_input("Enter Chinki's target role")
     
     # Step 3: Display fields and get user inputs
     st.header("Fill in or Edit Your Resume Information")
-    st.text("Leave the fields empty if you do not want to include the section in your resume.")
+    st.markdown("Leave the fields empty if you do not want to include the section in your resume.")
     
     for key in fields:
         content = fields[key]
