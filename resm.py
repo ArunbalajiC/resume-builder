@@ -570,7 +570,7 @@ def main():
     for key in fields:
         content = fields[key]
         height = estimate_height(content) if content is not None else 0
-        fields[key] = st.text_area(key, value=content, height=height)
+        fields[key] = st.text_area(key, value=content, height=height or 100)
 
         # Only add expanders and buttons to specific sections
         if key in ["Professional Summary", "Skills", "Certifications", "Conferences and Workshops"]:
